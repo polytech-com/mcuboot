@@ -364,16 +364,12 @@
 #if CONFIG_MCUBOOT_WATCHDOG_TIMEOUT
 #define MCUBOOT_WATCHDOG_INSTALL_TIMEOUT()                    \
     do {                                                      \
-        const struct device* wdt =                            \
-            DEVICE_DT_GET(DT_ALIAS(watchdog0));               \
-        if (device_is_ready(wdt)) {                           \
-            struct wdt_timeout_cfg wdtConfig = {              \
-                .flags = WDT_FLAG_RESET_SOC,                  \
-                .window.min = 0,                              \
-                .window.max = CONFIG_MCUBOOT_WATCHDOG_TIMEOUT \
-            };                                                \
-            wdt_install_timeout(wdt, &wdtConfig);             \
-        }                                                     \
+        struct wdt_timeout_cfg wdtConfig = {                  \
+            .flags = WDT_FLAG_RESET_SOC,                      \
+            .window.min = 0,                                  \
+            .window.max = CONFIG_MCUBOOT_WATCHDOG_TIMEOUT     \
+        };                                                    \
+        wdt_install_timeout(wdt, &wdtConfig);                 \
     } while (0)
 #else
 #define MCUBOOT_WATCHDOG_INSTALL_TIMEOUT()                    \
