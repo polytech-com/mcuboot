@@ -169,6 +169,16 @@ boot_add_shared_data(struct boot_loader_state *state,
     rc = boot_save_shared_data(boot_img_hdr(state, active_slot),
                                 BOOT_IMG_AREA(state, active_slot),
                                 active_slot, image_max_sizes);
+#if BOOT_IMAGE_NUMBER > 1
+    if (rc == SHARED_MEMORY_OVERWRITE) {
+        /* If the data is already present in the shared memory area, then
+         * return success.
+         */
+        rc = SHARED_MEMORY_OK;
+        BOOT_LOG_WRN("Data already present in shared memory area.");
+    }
+#endif
+
     if (rc != 0) {
         BOOT_LOG_ERR("Failed to add data to shared memory area.");
         return rc;
