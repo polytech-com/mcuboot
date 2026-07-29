@@ -239,6 +239,18 @@ bootutil_rsa_parse_private_key(bootutil_rsa_context *ctx, uint8_t **p, uint8_t *
     if (mbedtls_asn1_get_int(p, end, &ctx->MBEDTLS_CONTEXT_MEMBER(ver)) != 0) {
         return -3;
     }
+#else
+    /* The "ver" field was removed from the RSA context, but RFC3447 A.1.2 still puts
+     * the version INTEGER first, so it has to be consumed to keep the parser aligned
+     * with the rest of the key.
+     */
+    {
+        int version;
+
+        if (mbedtls_asn1_get_int(p, end, &version) != 0) {
+            return -3;
+        }
+    }
 #endif /* !TF_PSA_CRYPTO_VERSION_NUMBER */
 
     /* Non-optional fields. */
